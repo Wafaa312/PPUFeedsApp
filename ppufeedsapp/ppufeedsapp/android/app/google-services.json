@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "656896457085",
+    "project_id": "ppufeed",
+    "storage_bucket": "ppufeed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656896457085:android:48f8402a07c3d090f8b414",
+        "android_client_info": {
+          "package_name": "com.example.ppufeedsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXnNsreV5IjxwAVJldAXR8sMpPlg6YV54"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
