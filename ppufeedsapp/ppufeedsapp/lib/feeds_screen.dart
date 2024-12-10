@@ -77,7 +77,12 @@ class _FeedsScreenState extends State<FeedsScreen> {
         final data = jsonDecode(response.body);
         setState(() {
           _subscribedCourses = Set<int>.from(
-              data['subscriptions'].map<int>((s) => s['course_id']));
+            data['subscriptions'].map<int>((s) {
+              final sectionId = s['section_id']; // التأكد من جلب الـ section_id
+              print('Course ID: ${s['course_id']}, Section ID: $sectionId');
+              return s['course_id'];
+            }),
+          );
         });
       } else {
         print('Error fetching subscriptions: ${response.body}');
