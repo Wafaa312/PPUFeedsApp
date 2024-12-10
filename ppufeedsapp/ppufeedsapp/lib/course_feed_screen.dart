@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:ppufeedsapp/comments_feed_screen.dart';
@@ -83,6 +82,75 @@ class _PostsScreenState extends State<PostsScreen> {
     }
   }
 
+  Future<void> addPost(String postContent) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://feeds.ppu.edu/api/v1/courses/${widget.courseId}/sections/${widget.sectionId}/posts'),
+        headers: {
+          'Authorization': widget.authToken,
+          'Content-Type': 'application/json'
+        },
+        body: jsonEncode({'body': postContent}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _posts.add({
+            'id': data['post_id'],
+            'body': postContent,
+            'date_posted': DateTime.now().toString(),
+            'author': 'أنا', // يجب تحديثه باسم المستخدم الفعلي
+          });
+          _posts.sort((a, b) => b['date_posted'].compareTo(a['date_posted']));
+        });
+        _showSnackbar('تم إضافة منشور جديد.');
+      } else {
+        _showSnackbar('خطأ في إضافة المنشور.');
+      }
+    } catch (e) {
+      _showSnackbar('حدث خطأ أثناء إضافة المنشور.');
+    }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 3),
+    ));
+  }
+
+  void _showAddPostDialog() {
+    final TextEditingController _postController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('أضف منشورًا جديدًا'),
+          content: TextField(
+            controller: _postController,
+            decoration: const InputDecoration(labelText: 'نص المنشور'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('إلغاء'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                addPost(_postController.text.trim());
+              },
+              child: const Text('إضافة'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,6 +190,10 @@ class _PostsScreenState extends State<PostsScreen> {
                     );
                   },
                 ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddPostDialog(),
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
